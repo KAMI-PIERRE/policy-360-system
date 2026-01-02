@@ -391,7 +391,7 @@ const RegisterForm = () => {
           fontWeight="800" 
           gutterBottom
           sx={{
-            background: 'linear-gradient(45deg, #667eea, #764ba2)',
+            background: 'linear-gradient(45deg, #0033a0, #fcd116)', // Blue to Yellow
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
           }}
@@ -438,9 +438,9 @@ const RegisterForm = () => {
               size="large"
               sx={{
                 px: 6,
-                background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                background: 'linear-gradient(45deg, #0033a0, #fcd116)', // Blue to Yellow
                 '&:hover': {
-                  background: 'linear-gradient(45deg, #764ba2, #667eea)',
+                  background: 'linear-gradient(45deg, #fcd116, #20603d)', // Yellow to Green
                 },
               }}
             >

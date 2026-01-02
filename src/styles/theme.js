@@ -1,28 +1,27 @@
 // src/styles/theme.js
 import { createTheme } from '@mui/material/styles';
 
+// Updated theme to include Rwandan flag colors
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#667eea',
-      light: '#a3b5ff',
-      dark: '#764ba2',
+      main: '#20603d', // Green
+      light: '#58a05e',
+      dark: '#154d2b',
     },
     secondary: {
-      main: '#f56565',
+      main: '#fcd116', // Yellow
+      light: '#ffe066',
+      dark: '#c9a00e',
     },
-    success: {
-      main: '#48bb78',
-    },
-    warning: {
-      main: '#ed8936',
-    },
-    error: {
-      main: '#f56565',
+    info: {
+      main: '#0033a0', // Blue
+      light: '#335bb5',
+      dark: '#002080',
     },
     background: {
-      default: '#f7fafc',
-      paper: '#ffffff',
+      default: '#ffffff',
+      paper: '#f7fafc',
     },
   },
   typography: {

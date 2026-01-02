@@ -12,6 +12,7 @@ const Navbar = () => {
         <Link to="/">Policy360</Link>
       </div>
       <ul className="navbar-links">
+        <li><Link to="/">Home</Link></li> {/* Home button */}
         <li><Link to="/register">Register</Link></li>
         <li><Link to="/login">Login</Link></li>
         {isAuthenticated && <li><Link to="/data-import">Data Import</Link></li>}

@@ -9,8 +9,7 @@ function LandingPage() {
         <h1>Welcome to Policy360</h1>
         <p>Your ultimate solution for policy analysis and management.</p>
         <div className="landing-buttons">
-          <Link to="/login" className="btn btn-primary">Login</Link>
-          <Link to="/register" className="btn btn-secondary">Register</Link>
+          <Link to="/dashboard" className="btn btn-primary">Get Started</Link>
         </div>
       </header>
       <section className="features">

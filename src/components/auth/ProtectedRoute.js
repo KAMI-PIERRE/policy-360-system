@@ -15,7 +15,8 @@ const ProtectedRoute = ({ children }) => {
           justifyContent: 'center',
           alignItems: 'center',
           minHeight: '100vh',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          // Updated background gradient to match Rwandan flag
+          background: 'linear-gradient(135deg, #0033a0 0%, #fcd116 50%, #20603d 100%)', // Blue, Yellow, Green
         }}
       >
         <CircularProgress sx={{ color: 'white' }} />

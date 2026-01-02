@@ -34,13 +34,13 @@ import Footer from './components/shared/Footer';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1976d2',
+      main: '#0033a0', // Blue
     },
     secondary: {
-      main: '#9c27b0',
+      main: '#fcd116', // Yellow
     },
     background: {
-      default: '#f4f6f8',
+      default: '#20603d', // Green
     },
   },
   typography: {

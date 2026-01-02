@@ -64,7 +64,7 @@ const LoginPage = () => {
         alignItems: 'center',
         justifyContent: 'center',
         p: 2,
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #0033a0 0%, #fcd116 50%, #20603d 100%)', // Blue, Yellow, Green
       }}
     >
       <Paper
@@ -83,7 +83,7 @@ const LoginPage = () => {
             variant="h3"
             sx={{
               fontWeight: 800,
-              background: 'linear-gradient(45deg, #667eea, #764ba2)',
+              background: 'linear-gradient(45deg, #0033a0, #fcd116)', // Blue to Yellow
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               mb: 1,
@@ -170,9 +170,9 @@ const LoginPage = () => {
               mt: 3,
               py: 1.5,
               borderRadius: 2,
-              background: 'linear-gradient(45deg, #667eea, #764ba2)',
+              background: 'linear-gradient(45deg, #0033a0, #fcd116)', // Blue to Yellow
               '&:hover': {
-                background: 'linear-gradient(45deg, #764ba2, #667eea)',
+                background: 'linear-gradient(45deg, #fcd116, #20603d)', // Yellow to Green
               },
             }}
           >
