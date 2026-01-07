@@ -1,6 +1,7 @@
 /* Footer styles */
 .footer {
-  background-color: #20603d;
+  /* Rwanda flag gradient: blue -> yellow -> green */
+  background: linear-gradient(90deg, #1E90FF 0%, #FFD400 50%, #00966E 100%);
   color: white;
   padding: 2rem;
   text-align: center;
@@ -29,16 +30,16 @@
 }
 
 .footer-bottom {
-  border-top: 1px solid #fad201;
+  border-top: 1px solid rgba(255, 212, 0, 0.25);
   padding-top: 1rem;
   font-size: 0.8rem;
 }
 
 .footer a {
-  color: #fad201;
+  color: rgba(0,0,0,0.8);
   text-decoration: none;
 }
 
 .footer a:hover {
-  color: #00a1de;
+  color: rgba(0,0,0,1);
 }

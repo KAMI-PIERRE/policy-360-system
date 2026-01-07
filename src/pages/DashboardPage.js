@@ -1,255 +1,307 @@
 // src/pages/DashboardPage.js
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   Grid,
   Paper,
   Typography,
   Box,
-  Card,
-  CardContent,
-  CardActions,
-  Button,
-  Chip,
-  IconButton,
-  Fab,
-  Tabs,
-  Tab,
-  Badge,
-  Avatar,
-  AvatarGroup,
-  LinearProgress,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
-import {
-  Add as AddIcon,
-  TrendingUp as TrendingUpIcon,
-  DataArray as DataArrayIcon,
-  Assessment as AssessmentIcon,
-  Timeline as TimelineIcon,
-  People as PeopleIcon,
-  CloudUpload as CloudUploadIcon,
-  Analytics as AnalyticsIcon,
-  School,
-  LocalHospital,
-  Agriculture,
-  Architecture,
-  Computer,
-  ArrowForward,
-  MoreVert,
-} from '@mui/icons-material';
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { useAuth } from '../context/AuthContext';
-import toast from 'react-hot-toast';
-import DataImportTabs from '../components/data/DataImportTabs';
-import PolicyWorkflow from '../components/policy/PolicyWorkflow';
-import { SECTORS } from '../utils/constants';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar } from 'recharts';
+import { useNavigate } from 'react-router-dom';
 
-// Mock data
-const mockPolicies = [
-  {
-    id: '1',
-    title: 'Rural Education Enhancement Program',
-    description: 'A comprehensive policy to improve educational infrastructure and teacher training in rural areas.',
-    sector: 'education',
-    status: 'active',
-    progress: 65,
-    stage: 'Implementation',
-    lastUpdated: '2024-01-15',
-    stakeholders: 12,
-    color: '#4CAF50',
-  },
-  {
-    id: '2',
-    title: 'National Health Insurance Scheme',
-    description: 'Universal healthcare coverage policy implementation and monitoring framework.',
-    sector: 'health',
-    status: 'analysis',
-    progress: 40,
-    stage: 'Analysis',
-    lastUpdated: '2024-01-14',
-    stakeholders: 24,
-    color: '#F44336',
-  },
-  {
-    id: '3',
-    title: 'Sustainable Agriculture Initiative',
-    description: 'Policy framework for promoting organic farming and sustainable agricultural practices.',
-    sector: 'agriculture',
-    status: 'ideation',
-    progress: 25,
-    stage: 'Ideation',
-    lastUpdated: '2024-01-12',
-    stakeholders: 8,
-    color: '#FF9800',
-  },
+// Mock data for Monthly Progress
+const chartData = [
+  { name: 'Jan', policyProgress: 40, implementation: 24, analysis: 24, monitoring: 12, evaluation: 8 },
+  { name: 'Feb', policyProgress: 30, implementation: 13, analysis: 22, monitoring: 14, evaluation: 10 },
+  { name: 'Mar', policyProgress: 20, implementation: 98, analysis: 22, monitoring: 16, evaluation: 12 },
+  { name: 'Apr', policyProgress: 27, implementation: 39, analysis: 20, monitoring: 18, evaluation: 14 },
+  { name: 'May', policyProgress: 18, implementation: 48, analysis: 21, monitoring: 15, evaluation: 11 },
+  { name: 'Jun', policyProgress: 23, implementation: 38, analysis: 25, monitoring: 19, evaluation: 13 },
+  { name: 'Jul', policyProgress: 34, implementation: 43, analysis: 21, monitoring: 20, evaluation: 15 },
 ];
 
-const sectorStats = {
-  education: { policies: 12, successRate: '78%', dataSources: 45 },
-  health: { policies: 8, successRate: '85%', dataSources: 67 },
-  agriculture: { policies: 6, successRate: '72%', dataSources: 32 },
-  urbanization: { policies: 9, successRate: '81%', dataSources: 54 },
-  technology: { policies: 5, successRate: '90%', dataSources: 41 },
-};
+// Sector Distribution Data
+const sectorData = [
+  { name: 'Education', value: 12, color: '#4CAF50' },
+  { name: 'Health', value: 8, color: '#F44336' },
+  { name: 'Agriculture', value: 6, color: '#FF9800' },
+  { name: 'Urbanization', value: 9, color: '#2196F3' },
+  { name: 'Technology', value: 5, color: '#9C27B0' },
+];
 
-const getSectorIcon = (sector) => {
-  switch (sector) {
-    case 'education': return <School />;
-    case 'health': return <LocalHospital />;
-    case 'agriculture': return <Agriculture />;
-    case 'urbanization': return <Architecture />;
-    case 'technology': return <Computer />;
-    default: return <AssessmentIcon />;
-  }
-};
+// Policy Stages/Workflow Data
+const stageData = [
+  { name: 'Ideation', value: 18, color: '#FF6B6B' },
+  { name: 'Analysis', value: 25, color: '#4ECDC4' },
+  { name: 'Implementation', value: 20, color: '#45B7D1' },
+  { name: 'Monitoring', value: 16, color: '#FFA07A' },
+  { name: 'Evaluation', value: 12, color: '#98D8C8' },
+];
 
-const data = [
-  { name: 'Jan', uv: 4000, pv: 2400, amt: 2400 },
-  { name: 'Feb', uv: 3000, pv: 1398, amt: 2210 },
-  { name: 'Mar', uv: 2000, pv: 9800, amt: 2290 },
-  { name: 'Apr', uv: 2780, pv: 3908, amt: 2000 },
-  { name: 'May', uv: 1890, pv: 4800, amt: 2181 },
-  { name: 'Jun', uv: 2390, pv: 3800, amt: 2500 },
-  { name: 'Jul', uv: 3490, pv: 4300, amt: 2100 },
+// Policy Status Data
+const statusData = [
+  { name: 'Draft', value: 5, color: '#959595' },
+  { name: 'In Review', value: 8, color: '#FFA500' },
+  { name: 'Active', value: 14, color: '#4CAF50' },
+  { name: 'Completed', value: 4, color: '#2196F3' },
+];
+
+// Recent Activity Data (Timeline)
+const recentActivityData = [
+  { month: 'Week 1', education: 3, health: 2, agriculture: 1, urbanization: 2, technology: 1 },
+  { month: 'Week 2', education: 5, health: 3, agriculture: 2, urbanization: 3, technology: 2 },
+  { month: 'Week 3', education: 4, health: 4, agriculture: 3, urbanization: 2, technology: 1 },
+  { month: 'Week 4', education: 6, health: 5, agriculture: 2, urbanization: 4, technology: 3 },
 ];
 
 const DashboardPage = () => {
   const { user } = useAuth();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
-  const [tabValue, setTabValue] = useState(0);
-  const [policies, setPolicies] = useState(mockPolicies);
-  const [stats, setStats] = useState({
-    totalPolicies: 31,
-    activeProjects: 8,
-    dataPoints: 12345,
-    completionRate: '76%',
-  });
 
-  const sectorInfo = {
-    education: { label: 'Education', icon: <School />, color: '#4CAF50' },
-    health: { label: 'Health', icon: <LocalHospital />, color: '#F44336' },
-    agriculture: { label: 'Agriculture', icon: <Agriculture />, color: '#FF9800' },
-    urbanization: { label: 'Urbanization', icon: <Architecture />, color: '#2196F3' },
-    technology: { label: 'ICT & Technology', icon: <Computer />, color: '#9C27B0' },
-  }[user?.sector] || { label: 'General', color: '#667eea' };
-
-  const handleCreateNewPolicy = () => {
-    toast.success('Creating new policy analysis...');
-    navigate('/policy/new');
-  };
-
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
-
-  const QuickActionCard = ({ icon, title, description, color, onClick }) => (
-    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-      <Card 
-        sx={{ 
-          height: '100%',
-          cursor: 'pointer',
-          borderLeft: `4px solid ${color}`,
-        }}
-        onClick={onClick}
+  const StatCard = ({ label, value, color, onClick }) => (
+    <Paper
+      elevation={1}
+      sx={{
+        p: { xs: 1, sm: 1.25, md: 1.5 },
+        textAlign: 'center',
+        borderLeft: `4px solid ${color}`,
+        borderRadius: 1.25,
+        height: '100%',
+        transition: 'transform 0.18s ease, box-shadow 0.18s ease',
+        cursor: onClick ? 'pointer' : 'default',
+        '&:hover': onClick ? { transform: 'translateY(-3px)', boxShadow: 2 } : {},
+      }}
+      onClick={onClick}
+    >
+      <Typography variant="body2" color="text.secondary" gutterBottom sx={{ fontSize: { xs: '0.8rem', sm: '0.9rem' }, mb: 1 }}>
+        {label}
+      </Typography>
+      <Typography 
+        variant={isMobile ? 'h6' : 'h5'} 
+        fontWeight="700" 
+        color={color}
+        sx={{ fontSize: { xs: '1.5rem', sm: '1.8rem', md: '2rem' } }}
       >
-        <CardContent>
-          <Box display="flex" alignItems="center" mb={2}>
-            <Box
-              sx={{
-                p: 1,
-                borderRadius: 2,
-                bgcolor: `${color}20`,
-                color: color,
-                mr: 2,
-              }}
-            >
-              {icon}
-            </Box>
-            <Typography variant="h6">{title}</Typography>
-          </Box>
-          <Typography variant="body2" color="text.secondary">
-            {description}
-          </Typography>
-        </CardContent>
-      </Card>
-    </motion.div>
+        {value}
+      </Typography>
+    </Paper>
   );
 
   return (
-    <Box sx={{ p: 3 }}>
-      {/* Summary Data in Cards */}
-      <Grid container spacing={3}>
-        {[ // Summary data array
-          { label: 'Total Policies', value: 31, color: '#0033a0' }, // Blue
-          { label: 'Active Projects', value: 8, color: '#fcd116' }, // Yellow
-          { label: 'Data Points', value: '12,345', color: '#20603d' }, // Green
-        ].map((item, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
-            <Paper
-              elevation={3}
-              sx={{
-                p: 3,
-                textAlign: 'center',
-                borderLeft: `5px solid ${item.color}`,
-              }}
-            >
-              <Typography variant="h6" fontWeight="600" gutterBottom>
-                {item.label}
-              </Typography>
-              <Typography variant="h4" fontWeight="800" color={item.color}>
-                {item.value}
-              </Typography>
-            </Paper>
-          </Grid>
-        ))}
+    <Box sx={{ bgcolor: '#ffffff', minHeight: '100vh', width: '100%' }}>
+      <Box sx={{ width: '100%', px: { xs: 1, sm: 2, md: 3 }, py: 2 }}>
+      {/* Welcome Header */}
+      <Box sx={{ mb: 2, pl: { xs: 0.5, sm: 1, md: 2 } }}>
+        <Typography variant="h5" fontWeight={700} sx={{ fontSize: { xs: '1.3rem', sm: '1.6rem', md: '1.9rem' }, mb: 0.5 }}>
+          Policy Analysis Dashboard
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', sm: '0.9rem' } }}>
+          {user?.name ? `Sector: ${user.sector}` : 'Data Policy Management System'}
+        </Typography>
+      </Box>
+
+      {/* Top 4 Stats Cards - Compact Layout */}
+      <Grid container spacing={1} sx={{ mb: 2 }}>
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard label="Total Policies" value="31" color="#0033a0" onClick={() => navigate('/reports')} />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard label="Active Projects" value="8" color="#fcd116" onClick={() => navigate('/dashboard')} />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard label="Data Points" value="12,345" color="#20603d" />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard label="Success Rate" value="76%" color="#F44336" />
+        </Grid>
       </Grid>
 
-      {/* Charts Section */}
-      <Grid container spacing={3} mt={3}>
-        <Grid item xs={12} md={6}>
-          <Paper elevation={3} sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Line Chart Analysis
+      {/* Charts Grid - Compact */}
+      <Grid container spacing={1}>
+        {/* Line Chart - Full Width on Mobile/Tablet, Half on Desktop */}
+        <Grid item xs={12} lg={6}>
+          <Paper elevation={1} sx={{ p: 1, height: '100%', borderRadius: 1.5 }}>
+            <Typography variant="h6" sx={{ mb: 1.5, fontWeight: 600, fontSize: { xs: '0.95rem', sm: '1.05rem', md: '1.15rem' } }}>
+              Policy Implementation Progress
             </Typography>
-            <LineChart
-              width={500}
-              height={300}
-              data={data}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="pv" stroke="#8884d8" />
-              <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-            </LineChart>
+            {/* Redesigned Charts Layout: main 8/4 area, sector overview, bottom pies */}
+            <Grid container spacing={1} alignItems="stretch">
+              {/* Main area: large line chart (left) and stacked small panels (right) */}
+              <Grid item xs={12} md={8}>
+                <Paper elevation={1} sx={{ p: 1, height: '100%', minHeight: { xs: 380, md: 520 }, borderRadius: 1.5 }}>
+                  <Typography variant="h6" sx={{ mb: 1.5, fontWeight: 600 }}>
+                    Policy Implementation Progress
+                  </Typography>
+                  <Box sx={{ width: '100%', height: '100%' }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={chartData} margin={{ top: 10, right: 20, left: -10, bottom: 10 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Line type="monotone" dataKey="policyProgress" stroke="#1976d2" strokeWidth={2} dot={false} />
+                        <Line type="monotone" dataKey="implementation" stroke="#2e7d32" strokeWidth={2} dot={false} />
+                        <Line type="monotone" dataKey="analysis" stroke="#ffb300" strokeWidth={2} dot={false} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </Box>
+                </Paper>
+              </Grid>
+
+              <Grid item xs={12} md={4}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, height: '100%' }}>
+                  <Paper elevation={1} sx={{ p: 1, borderRadius: 1.5, flex: '1 1 0' }}>
+                    <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
+                      Policy Workflow Stages
+                    </Typography>
+                    <Box sx={{ width: '100%', height: 180 }}>
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={stageData} margin={{ top: 0, right: 10, left: -10, bottom: 0 }}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                          <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                          <YAxis />
+                          <Tooltip />
+                          <Bar dataKey="value">
+                            {stageData.map((entry, idx) => (
+                              <Cell key={idx} fill={entry.color} />
+                            ))}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </Box>
+                  </Paper>
+
+                  <Paper elevation={1} sx={{ p: 1, borderRadius: 1.5, flex: '1 1 0' }}>
+                    <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
+                      Policy Status
+                    </Typography>
+                    <Box sx={{ width: '100%', height: 180 }}>
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie data={statusData} dataKey="value" cx="50%" cy="50%" outerRadius={60} labelLine={false} label={({ name, value }) => `${name}: ${value}`}>
+                            {statusData.map((entry, idx) => (
+                              <Cell
+                                key={idx}
+                                fill={entry.color}
+                                onClick={() => navigate(`/reports?status=${encodeURIComponent(entry.name)}`)}
+                              />
+                            ))}
+                          </Pie>
+                          <Tooltip />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </Box>
+                  </Paper>
+                </Box>
+              </Grid>
+
+              {/* Sector Overview - full width */}
+              <Grid item xs={12}>
+                <Paper elevation={1} sx={{ p: 1.5, borderRadius: 1.5 }}>
+                  <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+                    Sector Overview
+                  </Typography>
+                  <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', sm: 'repeat(3, 1fr)', md: 'repeat(5, 1fr)' }, gap: 1 }}>
+                    {sectorData.map((sector, idx) => (
+                      <Box key={idx} sx={{ p: 1.25, bgcolor: 'rgba(255,255,255,0.6)', borderRadius: 1.5 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1, alignItems: 'center' }}>
+                          <Typography variant="body2" fontWeight={700} sx={{ fontSize: '0.95rem' }}>{sector.name}</Typography>
+                          <Typography variant="body2" fontWeight={800} sx={{ color: sector.color }}>{sector.value}</Typography>
+                        </Box>
+                        <Box sx={{ height: 8, bgcolor: '#e0e0e0', borderRadius: 4, overflow: 'hidden' }}>
+                          <Box sx={{ height: '100%', width: `${(sector.value / 12) * 100}%`, bgcolor: sector.color }} />
+                        </Box>
+                      </Box>
+                    ))}
+                  </Box>
+                </Paper>
+              </Grid>
+
+              {/* Bottom pies side-by-side */}
+              <Grid item xs={12} md={6}>
+                <Paper elevation={1} sx={{ p: 1.25, borderRadius: 1.5, minHeight: 280 }}>
+                  <Typography variant="h6" sx={{ mb: 1.5, fontWeight: 600 }}>Policies by Workflow Stage</Typography>
+                  <Box sx={{ width: '100%', height: 240 }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie data={stageData} dataKey="value" cx="50%" cy="50%" outerRadius={90} labelLine={false} label={({ name, value }) => `${name}: ${value}`}>
+                          {stageData.map((entry, idx) => (
+                            <Cell
+                              key={idx}
+                              fill={entry.color}
+                              onClick={() => navigate(`/reports?stage=${encodeURIComponent(entry.name)}`)}
+                            />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </Box>
+                </Paper>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Paper elevation={1} sx={{ p: 1.25, borderRadius: 1.5, minHeight: 280 }}>
+                  <Typography variant="h6" sx={{ mb: 1.5, fontWeight: 600 }}>Policies by Sector Distribution</Typography>
+                  <Box sx={{ width: '100%', height: 240 }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie data={sectorData} dataKey="value" cx="50%" cy="50%" outerRadius={90} labelLine={false} label={({ name, value }) => `${name}: ${value}`}>
+                          {sectorData.map((entry, idx) => (
+                            <Cell
+                              key={idx}
+                              fill={entry.color}
+                              onClick={() => navigate(`/reports?sector=${encodeURIComponent(entry.name)}`)}
+                            />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </Box>
+                </Paper>
+              </Grid>
+            </Grid>
           </Paper>
         </Grid>
-        <Grid item xs={12} md={6}>
-          <Paper elevation={3} sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Bar Chart Analysis
+
+        {/* Policies by Sector Distribution Pie Chart */}
+        <Grid item xs={12} lg={6}>
+          <Paper elevation={1} sx={{ p: 1, height: '100%', minHeight: { xs: 380, md: 520 }, borderRadius: 1.5 }}>
+            <Typography variant="h6" sx={{ mb: 1.5, fontWeight: 600, fontSize: { xs: '0.95rem', sm: '1.05rem', md: '1.15rem' } }}>
+              Policies by Sector Distribution
             </Typography>
-            <BarChart
-              width={500}
-              height={300}
-              data={data}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="pv" fill="#8884d8" />
-              <Bar dataKey="uv" fill="#82ca9d" />
-            </BarChart>
+            <Box sx={{ width: '100%', height: { xs: 360, sm: 420, md: 520 } }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={sectorData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={!isMobile}
+                    label={isMobile ? undefined : ({ name, value }) => `${name}: ${value}`}
+                    outerRadius={isMobile ? 60 : 85}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {sectorData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </Box>
           </Paper>
         </Grid>
       </Grid>
+      </Box>
     </Box>
   );
 };

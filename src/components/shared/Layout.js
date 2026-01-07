@@ -21,6 +21,7 @@ import {
 import {
   Menu as MenuIcon,
   Dashboard as DashboardIcon,
+  Home as HomeIcon,
   Policy as PolicyIcon,
   CloudUpload as CloudUploadIcon,
   Assessment as AssessmentIcon,
@@ -38,10 +39,12 @@ const drawerWidth = 280;
 const Layout = ({ children }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleDrawerToggle = () => {
+    setDrawerOpen(!drawerOpen);
     setMobileOpen(!mobileOpen);
   };
 
@@ -59,11 +62,11 @@ const Layout = ({ children }) => {
   };
 
   const menuItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/' },
-    { text: 'Policy Analysis', icon: <PolicyIcon />, path: '/policy/new' },
+    { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
+    { text: 'Policy Analysis', icon: <PolicyIcon />, path: '/policy-analysis' },
     { text: 'Data Import', icon: <CloudUploadIcon />, path: '/import-data' },
     { text: 'Reports', icon: <AssessmentIcon />, path: '/reports' },
-    { text: 'Analytics', icon: <TrendingUpIcon />, path: '/analytics' },
+    { text: 'Analytics', icon: <TrendingUpIcon />, path: '/reports' },
   ];
 
   const drawer = (
@@ -144,10 +147,19 @@ const Layout = ({ children }) => {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' }, color: 'text.primary' }}
+            sx={{ mr: 2, color: 'text.primary' }}
           >
             <MenuIcon />
           </IconButton>
+                  <IconButton
+                    color="inherit"
+                    aria-label="go to home"
+                    edge="start"
+                    onClick={() => navigate('/')}
+                    sx={{ mr: 1, color: 'text.primary' }}
+                  >
+                    <HomeIcon />
+                  </IconButton>
           
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, color: 'text.primary' }}>
             {user?.sector?.toUpperCase()} Policy Dashboard
@@ -208,54 +220,25 @@ const Layout = ({ children }) => {
         </Toolbar>
       </AppBar>
       
-      <Box
-        component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-      >
+      <Box component="nav">
         <Drawer
           variant="temporary"
-          open={mobileOpen}
+          open={drawerOpen}
           onClose={handleDrawerToggle}
           ModalProps={{ keepMounted: true }}
           sx={{
-            display: { xs: 'block', sm: 'none' },
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
               width: drawerWidth,
               backgroundColor: 'background.paper',
             },
           }}
-        >
-          {drawer}
-        </Drawer>
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': {
-              boxSizing: 'border-box',
-              width: drawerWidth,
-              backgroundColor: 'background.paper',
-              borderRight: '1px solid',
-              borderColor: 'divider',
-            },
-          }}
-          open
         >
           {drawer}
         </Drawer>
       </Box>
       
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          minHeight: '100vh',
-          backgroundColor: 'background.default',
-        }}
-      >
+      <Box component="main" sx={{ flexGrow: 1, p: 3, minHeight: '100vh', backgroundColor: 'background.default' }}>
         <Toolbar />
         {children}
       </Box>

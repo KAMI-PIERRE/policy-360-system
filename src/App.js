@@ -19,6 +19,8 @@ import PolicyDetailPage from './pages/PolicyDetailPage';
 import DataImportPage from './pages/DataImportPage';
 import ReportsPage from './pages/ReportsPage';
 import LandingPage from './pages/LandingPage';
+import ProfilePage from './pages/ProfilePage';
+import SettingsPage from './pages/SettingsPage';
 
 // Components
 import Layout from './components/shared/Layout';
@@ -28,6 +30,7 @@ import RegisterForm from './components/auth/RegisterForm';
 // eslint-disable-next-line no-unused-vars
 import LoginForm from './components/auth/LoginForm';
 import PolicyWorkflow from './components/policy/PolicyWorkflow';
+import PolicyAnalysisPage from './pages/PolicyAnalysisPage';
 import Navbar from './components/shared/Navbar';
 import Footer from './components/shared/Footer';
 
@@ -40,7 +43,8 @@ const theme = createTheme({
       main: '#fcd116', // Yellow
     },
     background: {
-      default: '#20603d', // Green
+      default: '#ffffff', // White background across app
+      paper: '#ffffff',
     },
   },
   typography: {
@@ -106,6 +110,27 @@ function App() {
                   </Layout>
                 </ProtectedRoute>
               } />
+              <Route path="/policy-analysis" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <PolicyAnalysisPage />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <ProfilePage />
+                  </Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/settings" element={
+                <ProtectedRoute>
+                  <Layout>
+                    <SettingsPage />
+                  </Layout>
+                </ProtectedRoute>
+              } />
               <Route path="/policy-workflow" element={
                 <ProtectedRoute>
                   <Layout>
@@ -122,5 +147,4 @@ function App() {
     </ThemeProvider>
   );
 }
-
 export default App;
