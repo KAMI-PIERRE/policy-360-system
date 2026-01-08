@@ -66,14 +66,14 @@ const DashboardPage = () => {
   
 
   return (
-    <Box sx={{ bgcolor: '#ffffff', minHeight: '100vh', width: '100%' }}>
-      <Box sx={{ width: '100%', px: { xs: 1, sm: 2, md: 3 }, py: 2 }}>
+    <Box sx={{ bgcolor: '#ffffff', minHeight: '100vh', width: '100%', pt: 0, mt: { xs: 0, sm: '-48px', md: '-64px' } }}>
+      <Box sx={{ width: '100%', px: { xs: 1, sm: 2, md: 3 }, py: 0, mt: 0 }}>
       {/* Welcome Header */}
-      <Box sx={{ mb: 2, pl: { xs: 0.5, sm: 1, md: 2 } }}>
-        <Typography variant="h5" fontWeight={700} sx={{ fontSize: { xs: '1.3rem', sm: '1.6rem', md: '1.9rem' }, mb: 0.5 }}>
+      <Box sx={{ mb: 0, pl: { xs: 0, sm: 0, md: 0 } }}>
+        <Typography variant="h5" fontWeight={700} sx={{ fontSize: { xs: '1.3rem', sm: '1.6rem', md: '1.9rem' }, mb: 0, mt: { xs: '-4px', md: '-6px' } }}>
           Policy Analysis Dashboard
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', sm: '0.9rem' } }}>
+        <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', sm: '0.9rem' }, mt: 0 }}>
           {user?.name ? `Sector: ${user.sector}` : 'Data Policy Management System'}
         </Typography>
       </Box>
@@ -169,37 +169,39 @@ const DashboardPage = () => {
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="Sector Overview" sx={{ minHeight: 180 }}>
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', sm: 'repeat(3, 1fr)', md: 'repeat(5, 1fr)' }, gap: 1 }}>
-            {sectorData.map((sector, idx) => (
-              <Box key={idx} sx={{ p: 1.25, bgcolor: 'rgba(255,255,255,0.6)', borderRadius: 1.5 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1, alignItems: 'center' }}>
-                  <Typography variant="body2" fontWeight={700} sx={{ fontSize: '0.95rem' }}>{sector.name}</Typography>
-                  <Typography variant="body2" fontWeight={800} sx={{ color: sector.color }}>{sector.value}</Typography>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 2fr' }, gap: 2 }}>
+          <ChartCard title="Sector Overview" sx={{ minHeight: 180, overflow: 'visible' }}>
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', sm: 'repeat(3, 1fr)', md: 'repeat(5, 1fr)' }, gap: 1, overflow: 'visible' }}>
+              {sectorData.map((sector, idx) => (
+                <Box key={idx} sx={{ p: 1.25, bgcolor: 'rgba(255,255,255,0.6)', borderRadius: 1.5, position: 'relative', zIndex: 0, overflow: 'visible' }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1, alignItems: 'center' }}>
+                    <Typography variant="body2" fontWeight={700} sx={{ fontSize: '0.95rem' }}>{sector.name}</Typography>
+                    <Typography variant="body2" fontWeight={800} sx={{ color: sector.color }}>{sector.value}</Typography>
+                  </Box>
+                  <Box sx={{ height: 8, bgcolor: '#e0e0e0', borderRadius: 4, overflow: 'hidden' }}>
+                    <Box sx={{ height: '100%', width: `${(sector.value / 12) * 100}%`, bgcolor: sector.color }} />
+                  </Box>
                 </Box>
-                <Box sx={{ height: 8, bgcolor: '#e0e0e0', borderRadius: 4, overflow: 'hidden' }}>
-                  <Box sx={{ height: '100%', width: `${(sector.value / 12) * 100}%`, bgcolor: sector.color }} />
-                </Box>
-              </Box>
-            ))}
-          </Box>
-        </ChartCard>
+              ))}
+            </Box>
+          </ChartCard>
 
-        <ChartCard title="Recent Activity" sx={{ minHeight: 300 }}>
-          <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={recentActivityData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="education" fill="#4CAF50" />
-              <Bar dataKey="health" fill="#F44336" />
-              <Bar dataKey="agriculture" fill="#FF9800" />
-              <Bar dataKey="urbanization" fill="#2196F3" />
-              <Bar dataKey="technology" fill="#9C27B0" />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartCard>
+          <ChartCard title="Recent Activity" sx={{ minHeight: 300, gridColumn: '2', justifySelf: 'stretch' }}>
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={recentActivityData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="education" fill="#4CAF50" />
+                <Bar dataKey="health" fill="#F44336" />
+                <Bar dataKey="agriculture" fill="#FF9800" />
+                <Bar dataKey="urbanization" fill="#2196F3" />
+                <Bar dataKey="technology" fill="#9C27B0" />
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartCard>
+        </Box>
       </Box>
       </Box>
     </Box>
